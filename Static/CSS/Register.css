@@ -1,0 +1,42 @@
+﻿input {
+    padding: 15px;
+    margin: 5px 10px 22px 10px;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+    width: 100%;
+}
+
+    input[type=text]:focus, input[type=password]:focus, input[type=name]:focus {
+        background-color: #ddd;
+        outline: none;
+    }
+
+#registerTable {
+    margin: auto;
+    width: 75%;
+}
+
+
+#contentPane {
+    width: 33.3333%;
+    min-width: 414.13px;
+}
+
+    #contentPane h2 {
+        font-weight: bold;
+    }
+
+/* Set a style for the submit/register button */
+.registerButton {
+    background-color: #2b526c;
+    color: white;
+    padding: 16px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+    min-width: 160px;
+    opacity: 0.9;
+    display: inline-block;
+}

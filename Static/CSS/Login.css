@@ -1,0 +1,59 @@
+﻿input {
+    padding: 15px;
+    margin: 5px 10px 22px 10px;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+    width: 100%;
+}
+
+    input[type=text]:focus, input[type=password]:focus, input[type=name]:focus {
+        background-color: #ddd;
+        outline: none;
+    }
+
+#loginTable {
+    margin: auto;
+    width: 75%;
+}
+
+/* Set a style for the submit/register button */
+.loginButton {
+    background-color: #2b526c;
+    color: white;
+    padding: 16px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+    min-width: 106.88px;
+    opacity: 0.9;
+    display: inline-block;
+}
+
+    .loginButton:hover {
+        opacity: 1;
+    }
+
+#contentPane {
+    width: 33.3333%;
+    min-width: 400px;
+}
+
+    #contentPane h2 {
+        font-weight: bold;
+    }
+
+#createaccountbutton {
+    background-position: right bottom;
+    background-size: 200% 100%;
+    transition: all .1s ease-out;
+    border-top: 1px solid #777777;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #444444;
+    border-left: 1px solid #777777;
+}
+
+    #createaccountbutton:hover {
+        background-position: left bottom;
+    }

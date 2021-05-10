@@ -1,0 +1,57 @@
+﻿#contentPane {
+    width: 75%;
+    min-width: 960px;
+}
+
+.assetTable {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid white;
+}
+
+.assetTable tr td {
+    margin-left: 0px;
+    margin-right: 0px;
+    border-right: 1px solid #2b2b2b;
+}
+
+.assetTable tr {
+    border-top: 1px solid #2b2b2b;
+}
+
+.assetTable tr:first-child {
+    border-top: none;
+}
+
+.assetTable tr > :nth-child(7) {
+    border-right: solid white;
+}
+
+.assetTable tr > :nth-child(11) {
+    border-right: none;
+}
+
+.totalAssetRow > :nth-child(8) {
+    border-top: 1.5px solid white;
+}
+.totalAssetRow > :nth-child(9) {
+    border-top: 1.5px solid white; }
+
+.totalAssetRow > :nth-child(10) {
+    border-top: 1.5px solid white;
+}
+
+.totalAssetRow > :nth-child(11) {
+    border-top: 1.5px solid white;
+    border-right: none;
+}
+
+
+.assetTable th {
+    border-bottom: 1px solid white;
+}
+
+table{
+    table-layout:fixed;
+}
