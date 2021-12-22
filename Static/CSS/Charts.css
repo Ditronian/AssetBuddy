@@ -1,0 +1,29 @@
+﻿#contentPane {
+    width: 100%;
+    min-width: 960px;
+    margin-top: 0px;
+    border-radius: 0px;
+}
+
+#tickersPane {
+    float: left;
+    width: 20%;
+    border: 2px solid red;
+}
+
+#chartPane {
+    float: left;
+    width: 80%;
+    border: 2px solid red;
+}
+
+#chart {
+    height: 80%;
+    border: 2px solid red;
+    width:100%;
+}
+
+#settings {
+    height: 20%;
+    border: 2px solid red;
+}
