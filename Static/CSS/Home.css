@@ -1,6 +1,8 @@
 ﻿#contentPane {
-    width: 75%;
+    width: 100%;
     min-width: 960px;
+    margin-top: 0px;
+    border-radius: 0px;
 }
 
 .assetTable {

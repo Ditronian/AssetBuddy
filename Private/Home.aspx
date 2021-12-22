@@ -77,30 +77,52 @@
                             </asp:TableRow>
                         </asp:Table>
                         <hr />
+                        <asp:Timer ID="Timer1" runat="server" Interval="5000" OnTick="Timer1_Tick"></asp:Timer>
                     </ContentTemplate>
                     <Triggers>
                         <asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
                     </Triggers> 
+                    
                 </asp:UpdatePanel>
-                <asp:Timer ID="Timer1" runat="server" Interval="5000" OnTick="Timer1_Tick"></asp:Timer>
-                <table id="buyTable">
+                
+                <table id="addTable">
                         <tr>
                             <th>Symbol</th>
-                            <th>Purchase Amount</th>
+                            <th>Asset Amount</th>
                             <th>Average Purchase Price</th>
                             <th></th>
                         </tr>
                         <tr>
-                            <td><asp:TextBox ID="symbolBox" runat="server"></asp:TextBox></td>
-                            <td><asp:TextBox ID="amountBox" runat="server"></asp:TextBox></td>
-                            <td><asp:TextBox ID="priceBox" runat="server"></asp:TextBox></td>
+                            <td><asp:TextBox ID="addSymbolBox" runat="server"></asp:TextBox></td>
+                            <td><asp:TextBox ID="addAmountBox" runat="server"></asp:TextBox></td>
+                            <td><asp:TextBox ID="addPriceBox" runat="server"></asp:TextBox></td>
                             <td>
                                 <asp:DropDownList ID="cryptoDropdown" runat="server">
                                     <asp:ListItem Selected="True" Value="Crypto">Cryptocurrency</asp:ListItem>
                                     <asp:ListItem Value="Stock">Stock</asp:ListItem>
                                 </asp:DropDownList>
                             </td>
+                            <td><asp:Button runat="server" class="loginButton" Text="Add" OnClick="addButton_Click" /></td>
+                        </tr>
+                    </table>
+                    <table id="buyTable">
+                        <tr>
+                            <th>Asset Amount</th>
+                            <th>Average Purchase Price</th>
+                        </tr>
+                        <tr>
+                            <td><asp:TextBox ID="buyAmountBox" runat="server"></asp:TextBox></td>
+                            <td><asp:TextBox ID="buyPriceBox" runat="server"></asp:TextBox></td>
                             <td><asp:Button runat="server" class="loginButton" Text="Buy" OnClick="buyButton_Click" /></td>
+                        </tr>
+                    </table>
+                    <table id="sellTable">
+                        <tr>
+                            <th>Asset Amount</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td><asp:TextBox ID="sellAmountBox" runat="server"></asp:TextBox></td>
                             <td><asp:Button runat="server" class="loginButton" Text="Sell" OnClick="sellButton_Click" /></td>
                         </tr>
                     </table>

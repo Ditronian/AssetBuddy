@@ -46,6 +46,9 @@ public class UsersTable : DBTable
         {
             user.UserID = (Int32)data.Tables[0].Rows[0]["userID"];
             user.Email = (string)data.Tables[0].Rows[0]["email"];
+            if (data.Tables[0].Rows[0]["initialInvestment"] is DBNull) user.InitialInvestment = 0;
+            else user.InitialInvestment = (double)data.Tables[0].Rows[0]["initialInvestment"];
+
             if (data.Tables[0].Rows[0]["confirmationID"] is DBNull) user.ConfirmationID = null;
             else user.ConfirmationID = (string)data.Tables[0].Rows[0]["confirmationID"];
 
@@ -107,6 +110,17 @@ public class UsersTable : DBTable
         string query = "spDeleteConfirmationID";
         SqlParameter[] parameters = new SqlParameter[1];
         parameters[0] = new SqlParameter("confirmationID", confirmationGUID);
+
+        database.uploadCommand(query, parameters);
+    }
+
+    //Deletes the provided Confirmation GUID.
+    public void updateInitialInvestment(int userID, double investment)
+    {
+        string query = "spUpdateInitialInvestment";
+        SqlParameter[] parameters = new SqlParameter[2];
+        parameters[0] = new SqlParameter("userID", userID);
+        parameters[1] = new SqlParameter("investment", investment);
 
         database.uploadCommand(query, parameters);
     }

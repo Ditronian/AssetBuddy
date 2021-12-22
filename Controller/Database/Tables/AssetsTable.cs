@@ -31,6 +31,21 @@ public class AssetsTable : DBTable
         database.uploadCommand(query, parameters);
     }
 
+    //Updates an existing asset.
+    public void updateAsset(Asset asset)
+    {
+        string query = "spUpdateAsset";
+        SqlParameter[] parameters = new SqlParameter[6];
+        parameters[0] = new SqlParameter("userID", asset.UserID);
+        parameters[1] = new SqlParameter("symbol", asset.Symbol);
+        parameters[2] = new SqlParameter("purchasePrice", asset.PurchasePrice);
+        parameters[3] = new SqlParameter("amount", asset.Amount);
+        parameters[4] = new SqlParameter("isCrypto", asset.IsCrypto);
+        parameters[5] = new SqlParameter("assetID", asset.AssetID);
+
+        database.uploadCommand(query, parameters);
+    }
+
     //Returns all owned assets as an array
     public List<Asset> getAssets(int userID)
     {

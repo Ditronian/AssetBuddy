@@ -21,6 +21,7 @@ namespace AssetBuddy.Private
         double currentStock;
         double initialCrypto;
         double currentCrypto;
+        List<Asset> assets;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -30,7 +31,16 @@ namespace AssetBuddy.Private
                 Session["msg"] = "You must be logged in to access this page.";
                 Response.Redirect("~/Default.aspx");
             }
-            else userID = ((User)Session["user"]).UserID;
+            else
+            {
+                user = (User)Session["user"];
+                userID = user.UserID;
+
+                //Load assets
+                AssetsTable assetsTable = new AssetsTable(new DatabaseConnection());
+                assets = assetsTable.getAssets(userID);
+                assets = assets.OrderByDescending(o => o.Amount * o.PurchasePrice).ToList();
+            }
 
             //Needed to preserve which radio button was checked.
             if (Request.Form["selectedAsset"] != null)
@@ -80,11 +90,6 @@ namespace AssetBuddy.Private
                 totalTable.Rows.Add(saveMe3);
             }
 
-            AssetsTable assetsTable = new AssetsTable(new DatabaseConnection());
-
-            List<Asset> assets = assetsTable.getAssets(userID);
-            assets = assets.OrderByDescending(o=>o.Amount*o.PurchasePrice).ToList();
-
             //Foreach asset in the list, add to the table.
             foreach (Asset asset in assets)
             {
@@ -103,9 +108,7 @@ namespace AssetBuddy.Private
                     dailyCryptoGain += dailyGainDollars*asset.Amount;
                     dailyGainPercent = bReturn.DailyPriceChangePercent;
 
-                    //Control decimals, more if under $1.
-                    if (rawPrice > 1) currentPrice = Math.Round(rawPrice, 2);
-                    else currentPrice = Math.Round(rawPrice, 5);
+                    currentPrice = rawPrice;
 
                     cryptoTable.Rows.Add(assetRow);
                     initialCrypto += asset.Amount * asset.PurchasePrice;
@@ -116,9 +119,7 @@ namespace AssetBuddy.Private
                 {
                     rawPrice = PriceGrabber.GetStockPrice(asset.Symbol);
 
-                    //Control decimals, more if under $1.
-                    if (rawPrice > 1) currentPrice = Math.Round(rawPrice, 2);
-                    else currentPrice = Math.Round(rawPrice, 5);
+                    currentPrice = rawPrice;
 
                     stockTable.Rows.Add(assetRow);
                     initialStock += asset.Amount * asset.PurchasePrice;
@@ -127,7 +128,8 @@ namespace AssetBuddy.Private
 
                 double totalGain = Math.Round((currentPrice - asset.PurchasePrice) * asset.Amount, 2);
                 double percentageGain = Math.Round(((currentPrice - asset.PurchasePrice) / asset.PurchasePrice) * 100.0, 2);
-                initialInvestment += asset.Amount * asset.PurchasePrice;
+                //initialInvestment += asset.Amount * asset.PurchasePrice;
+                initialInvestment = user.InitialInvestment;
                 currentInvestment += currentPrice * asset.Amount;
 
                 assetRow.Asset = asset;
@@ -135,6 +137,7 @@ namespace AssetBuddy.Private
                 TableCell selectCell = new TableCell();
                 RadioButton radioButton = new RadioButton();
                 radioButton.GroupName = "selectedAsset";
+                if (selectedAssetID != -1 && selectedAssetID == asset.AssetID) radioButton.Checked = true;  //If asset's rb was checked pre-postback, recheck it.
                 radioButton.Attributes.Add("value", asset.AssetID.ToString());
                 selectCell.Controls.Add(radioButton);
 
@@ -142,12 +145,14 @@ namespace AssetBuddy.Private
                 symbolCell.Text = asset.Symbol;
 
                 TableCell amountCell = new TableCell();
-                if(asset.Amount > 1) amountCell.Text = Math.Round(asset.Amount, 2).ToString();
+                if (asset.Amount > 1000000) amountCell.Text = Math.Floor(asset.Amount).ToString();
+                else if(asset.Amount > 1) amountCell.Text = Math.Round(asset.Amount, 2).ToString();
                 else amountCell.Text = Math.Round(asset.Amount, 5).ToString();
 
                 TableCell initialPriceCell = new TableCell();
-                if(asset.PurchasePrice > 1) initialPriceCell.Text = "$" + Math.Round(asset.PurchasePrice, 2).ToString();
-                else initialPriceCell.Text = "$" + Math.Round(asset.PurchasePrice, 5).ToString();
+                if (asset.PurchasePrice < 0.0009) initialPriceCell.Text = "$" + asset.PurchasePrice.ToString("N6");
+                else if (asset.PurchasePrice < 0.009) initialPriceCell.Text = "$" + asset.PurchasePrice.ToString("N5");
+                else initialPriceCell.Text = "$" + asset.PurchasePrice.ToString("N2");
 
                 TableCell initialValueCell = new TableCell();
                 initialValueCell.Text = "$" + Math.Round(asset.PurchasePrice*asset.Amount,2).ToString();
@@ -158,7 +163,10 @@ namespace AssetBuddy.Private
                 else if (currentPrice - asset.PurchasePrice < 0) currentValueCell.ForeColor = Color.Red;
 
                 TableCell currentPriceCell = new TableCell();
-                currentPriceCell.Text = "$"+currentPrice.ToString();
+                if(currentPrice < 0.0009) currentPriceCell.Text = "$" + Math.Round(currentPrice, 7).ToString(".#######");
+                else if (currentPrice < 0.009) currentPriceCell.Text = "$" + Math.Round(currentPrice, 5).ToString(".#######");
+                else if (currentPrice < 1) currentPriceCell.Text = "$" + Math.Round(currentPrice, 3).ToString("N3");
+                else currentPriceCell.Text = "$"+ Math.Round(currentPrice, 2).ToString("N2");
                 if (currentPrice - asset.PurchasePrice > 0) currentPriceCell.ForeColor = Color.Green;
                 else if (currentPrice - asset.PurchasePrice < 0) currentPriceCell.ForeColor = Color.Red;
 
@@ -308,23 +316,23 @@ namespace AssetBuddy.Private
             totalTable.Rows.Add(totalRow);
         }
 
-        //Attempts to add an Asset to the User
-        protected void buyButton_Click(object sender, EventArgs e)
+        //Attempts to add a new Asset to the User
+        protected void addButton_Click(object sender, EventArgs e)
         {
             AssetsTable assetsTable = new AssetsTable(new DatabaseConnection());
 
             Asset asset = new Asset();
-            asset.Symbol = symbolBox.Text;
+            asset.Symbol = addSymbolBox.Text;
             asset.UserID = userID;
 
-            if (double.TryParse(amountBox.Text, out double amount)) asset.Amount = amount;
+            if (double.TryParse(addAmountBox.Text, out double amount)) asset.Amount = amount;
             else
             {
                 angryLabel.Text = "Invalid Input.  Purchase Amount must be a valid decimal number!";
                 return;
             }
 
-            if (double.TryParse(priceBox.Text, out double purchasePrice)) asset.PurchasePrice = purchasePrice;
+            if (double.TryParse(addPriceBox.Text, out double purchasePrice)) asset.PurchasePrice = purchasePrice;
             else
             {
                 angryLabel.Text = "Invalid Input.  Purchase Price must be a valid decimal number!";
@@ -336,9 +344,75 @@ namespace AssetBuddy.Private
 
             assetsTable.insertAsset(asset);
 
-            symbolBox.Text = "";
-            priceBox.Text = "";
-            amountBox.Text = "";
+            addSymbolBox.Text = "";
+            addPriceBox.Text = "";
+            addAmountBox.Text = "";
+        }
+
+        //Attempts to buy more of an existing asset
+        protected void buyButton_Click(object sender, EventArgs e)
+        {
+            if (selectedAssetID != -1)
+            {
+                AssetsTable assetsTable = new AssetsTable(new DatabaseConnection());
+
+                double buyAmount;
+                double buyPrice;
+
+                Asset existingAsset = null;
+
+                foreach (Asset assetT in assets)
+                {
+                    if (assetT.AssetID == selectedAssetID)
+                    {
+                        existingAsset = assetT;
+                        break;
+                    }
+                }
+
+                if (existingAsset == null)
+                {
+                    angryLabel.Text = "Asset Symbol not found.  Please choose an existing symbol.";
+                    return;
+                }
+
+                if (double.TryParse(buyAmountBox.Text, out double amount)) buyAmount = amount;
+                else
+                {
+                    angryLabel.Text = "Invalid Input.  Purchase Amount must be a valid decimal number!";
+                    return;
+                }
+
+                if (buyAmount <= 0)
+                {
+                    angryLabel.Text = "Invalid Input.  Please enter a value greater than zero to purchase.";
+                    return;
+                }
+
+                if (double.TryParse(buyPriceBox.Text, out double purchasePrice)) buyPrice = purchasePrice;
+                else
+                {
+                    angryLabel.Text = "Invalid Input.  Purchase Price must be a valid decimal number!";
+                    return;
+                }
+
+                double originalPurchase = existingAsset.Amount * existingAsset.PurchasePrice;
+                double newPurchase = buyAmount * buyPrice;
+
+                existingAsset.Amount += buyAmount;
+                existingAsset.PurchasePrice = (originalPurchase + newPurchase) / existingAsset.Amount; //Total dolars spent divided by the total number of coins = avg price of a coin
+
+                assetsTable.updateAsset(existingAsset);
+
+                buyPriceBox.Text = "";
+                buyAmountBox.Text = "";
+            }
+
+            else
+            {
+                angryLabel.Text = "Invalid Input.  You must select an asset to buy!";
+                return;
+            }
         }
 
         //Attempts to remove an Asset to the User
@@ -348,11 +422,60 @@ namespace AssetBuddy.Private
             if(selectedAssetID != -1)
             {
                 AssetsTable assetsTable = new AssetsTable(new DatabaseConnection());
-                assetsTable.deleteAsset(selectedAssetID);
+
+                //Sell all of the selected asset
+                if (sellAmountBox.Text == String.Empty)
+                {
+                    assetsTable.deleteAsset(selectedAssetID);
+                }
+
+                //Sell only a portion of the asset
+                else
+                {
+                    double sellAmount;
+
+                    Asset existingAsset = null;
+
+                    foreach (Asset assetT in assets)
+                    {
+                        if (assetT.AssetID == selectedAssetID)
+                        {
+                            existingAsset = assetT;
+                            break;
+                        }
+                    }
+
+                    if (existingAsset == null)
+                    {
+                        angryLabel.Text = "An asset finding error has occured.";
+                        return;
+                    }
+
+                    if (double.TryParse(sellAmountBox.Text, out double amount)) sellAmount = amount;
+                    else
+                    {
+                        angryLabel.Text = "Invalid Input.  Amount must be a valid decimal number!";
+                        return;
+                    }
+
+                    if (sellAmount > existingAsset.Amount)
+                    {
+                        angryLabel.Text = "Invalid Input.  You have tried selling an amount greater than you have.";
+                        return;
+                    }
+
+                    existingAsset.Amount -= sellAmount;
+
+                    assetsTable.updateAsset(existingAsset);
+
+                    sellAmountBox.Text = "";
+                }
+
+                
             }
             else
             {
-                angryLabel.Text = "Invalid Input.  Purchase Price must be a valid decimal number!";
+                angryLabel.Text = "Invalid Input.  You must select an asset to sell!";
                 return;
             }
         }

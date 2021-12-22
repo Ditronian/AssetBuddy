@@ -16,7 +16,8 @@ namespace AssetBuddy.Controller
     {
         private const string stockURL = "https://query1.finance.yahoo.com/v7/finance/chart/";
         private const string cryptoURL = "https://api.binance.com/api/v3/ticker/24hr?symbol=";
-        //CRYPTO.COM  https://api.crypto.com/v2/public/get-ticker?instrument_name=BTC_USDT
+        private const string cryptoComURL = "https://api.crypto.com/v2/public/get-ticker?instrument_name=";
+        //ticker_USDT
 
 
         //Returns the current market price of the selected stock if it exists.
@@ -58,11 +59,34 @@ namespace AssetBuddy.Controller
             }
             catch
             {
+                binanceData = CryptoComPrice(ticker);
+            }
+
+
+            return binanceData;
+        }
+
+        private static BinanceReturn CryptoComPrice(string ticker)
+        {
+            BinanceReturn binanceData = new BinanceReturn();
+
+            try
+            {
+                string json = (new WebClient()).DownloadString(cryptoComURL + ticker + "_USDT");
+                JObject data = JsonConvert.DeserializeObject<JObject>(json);
+
+                binanceData.LastPrice = (double)data["result"]["data"]["b"];
+                binanceData.DailyPriceChange = (double)data["result"]["data"]["c"];
+                double previousPrice = binanceData.LastPrice - binanceData.DailyPriceChange;
+                binanceData.DailyPriceChangePercent = ((binanceData.LastPrice / previousPrice)-1)*100.0;
+            }
+
+            catch
+            {
                 binanceData.LastPrice = 0;
                 binanceData.DailyPriceChange = 0;
                 binanceData.DailyPriceChangePercent = 0;
             }
-
 
             return binanceData;
         }

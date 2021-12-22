@@ -12,9 +12,11 @@ public class User
     private Byte[] password;
     private string email;
     private string confirmationID;
+    private double initialInvestment;
 
     public int UserID { get => userID; set => userID = value; }
     public Byte[] Password { get => password; set => password = value; }
     public string Email { get => email; set => email = value; }
     public string ConfirmationID { get => confirmationID; set => confirmationID = value; }
+    public double InitialInvestment { get => initialInvestment; set => initialInvestment = value; }
 }

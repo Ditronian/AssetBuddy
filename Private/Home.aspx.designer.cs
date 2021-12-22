@@ -87,31 +87,31 @@ namespace AssetBuddy.Private
         protected global::System.Web.UI.Timer Timer1;
 
         /// <summary>
-        /// symbolBox control.
+        /// addSymbolBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox symbolBox;
+        protected global::System.Web.UI.WebControls.TextBox addSymbolBox;
 
         /// <summary>
-        /// amountBox control.
+        /// addAmountBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox amountBox;
+        protected global::System.Web.UI.WebControls.TextBox addAmountBox;
 
         /// <summary>
-        /// priceBox control.
+        /// addPriceBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox priceBox;
+        protected global::System.Web.UI.WebControls.TextBox addPriceBox;
 
         /// <summary>
         /// cryptoDropdown control.
@@ -121,6 +121,33 @@ namespace AssetBuddy.Private
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList cryptoDropdown;
+
+        /// <summary>
+        /// buyAmountBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox buyAmountBox;
+
+        /// <summary>
+        /// buyPriceBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox buyPriceBox;
+
+        /// <summary>
+        /// sellAmountBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox sellAmountBox;
 
         /// <summary>
         /// angryLabel control.
